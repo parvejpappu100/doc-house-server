@@ -63,6 +63,13 @@ app.post("/users", async (req, res) => {
   res.send(result);
 });
 
+// * To get all users:
+app.get("/allUsers", async (req, res) => {
+  const usersCollection = db.usersCollection();
+  const result = await usersCollection.find().toArray();
+  res.send(result);
+});
+
 //* To get clients says collections:
 app.get("/client-says", async (req, res) => {
   const clientSaysCollections = db.getClientSaysCollection();
