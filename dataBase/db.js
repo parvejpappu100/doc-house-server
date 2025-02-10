@@ -21,7 +21,9 @@ function getClientSaysCollection() {
 
 function usersCollection() {
   return client.db("doc-house").collection("usersCollection");
-}
+};
+
+
 
 module.exports = {
   connect,
