@@ -49,6 +49,18 @@ app.post("/jwt", (req, res) => {
   res.send({ token });
 });
 
+// * Verify admin:
+const verifyAdmin = async (req, res, next) => {
+  const email = req.decoded.email;
+  const usersCollection = db.usersCollection();
+  const query = { email: email };
+  const user = await usersCollection.findOne(query);
+  if (user?.role !== "admin") {
+    return res.status(403).send({ error: true, message: "forbidden message" });
+  }
+  next();
+};
+
 // * To save users on db:
 app.post("/users", async (req, res) => {
   const user = req.body;
@@ -84,6 +96,21 @@ app.put("/users/:id", async (req, res) => {
   };
   const usersCollection = db.usersCollection();
   const result = await usersCollection.updateOne(filter, setNewRole, options);
+  res.send(result);
+});
+
+// * CHECK ADMIN OR  NOT:
+app.get("/users/admin/:email",verifyJWT, verifyAdmin, async (req, res) => {
+  const email = req.params.email;
+  const usersCollection = db.usersCollection();
+  console.log(email);
+
+  if (req.decoded.email !== email) {
+    return res.send({ admin: false });
+  }
+  const query = { email: email };
+  const user = await usersCollection.findOne(query);
+  const result = { admin: user?.role === "admin" };
   res.send(result);
 });
 
